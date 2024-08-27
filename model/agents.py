@@ -23,6 +23,8 @@ class RobotAgent(ap.Agent):
     def setup(self):
         self.agentType = 1  # 1 for robots
         self.carrying_object = None
+        self.total_steps = 0
+        self.total_dropped_objects = 0
 
     def see(self):
         """Detect surroundings and store the location of nearby objects, piles, and robots."""
@@ -80,6 +82,7 @@ class RobotAgent(ap.Agent):
                 if abs(my_pos[0] - pile_pos[0]) + abs(my_pos[1] - pile_pos[1]) == 1:  # Adjacent to the pile
                     target_pile.add()
                     self.carrying_object = None
+                    self.total_dropped_objects += 1
                 else:
                     self.move_towards(target_pile)
             else:
@@ -126,3 +129,4 @@ class RobotAgent(ap.Agent):
                 self.pick()
             else:
                 self.move_random()
+        self.total_steps += 1

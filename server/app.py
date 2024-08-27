@@ -27,6 +27,10 @@ async def websocket_endpoint(websocket: WebSocket):
     while True:
         data = await websocket.receive_text()  # Espera mensaje del cliente
         if data == "step":  # Si el mensaje es "step", avanza un paso en la simulación
+            if model.t >= model.p.steps:
+                model.end()
+                await websocket.send_json({"status": "simulation finished"})
+                break
             model.step()
 
             agents_data = []
@@ -34,7 +38,10 @@ async def websocket_endpoint(websocket: WebSocket):
                 agent_type = 1 
                 x, y = model.grid.positions[robot]
                 print(robot.carrying_object) # ver si el robot esta cargando una caja
-                agents_data.append({'agentType': agent_type, 'agentId': robot.id, 'x': x, 'y': y})
+                is_carrying = False
+                if robot.carrying_object:
+                    is_carrying = True
+                agents_data.append({'agentType': agent_type, 'agentId': robot.id, 'x': x, 'y': y, 'carryingObject': is_carrying})
             
             
             actual_valid_objects = 0
@@ -52,7 +59,7 @@ async def websocket_endpoint(websocket: WebSocket):
             for pile in model.piles:
                 agent_type = 3 
                 x, y = model.grid.positions[pile]  
-                agents_data.append({'agentType': agent_type, 'agentId': pile.id, 'x': x, 'y': y})
+                agents_data.append({'agentType': agent_type, 'agentId': pile.id, 'x': x, 'y': y, 'height': pile.get_height()})
                             
             model.print_grid()
             

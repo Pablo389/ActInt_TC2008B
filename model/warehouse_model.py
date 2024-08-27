@@ -29,6 +29,8 @@ class WarehouseModel(ap.Model):
         print("Estado final de las pilas:")
         for pile in self.piles:
             print(f"Pila en posición {self.grid.positions[pile]} tiene {pile.get_height()} cajas.")
+        for robot in self.robots:
+            print(f"Robot en posición {self.grid.positions[robot]} ha dado {robot.total_steps} pasos y ha dejado {robot.total_dropped_objects}.")
     
     def print_grid(self):
         "Impresión de la cuadrícula en consola"
