@@ -1,5 +1,6 @@
 from fastapi import FastAPI, WebSocket
 from model.warehouse_model import WarehouseModel
+import numpy as np
 
 app = FastAPI()
 
@@ -30,16 +31,33 @@ async def websocket_endpoint(websocket: WebSocket):
 
             agents_data = []
             for robot in model.robots:
-                agent_type = 1  # Tipo de agente (1: Robot, 2: Object, 3: Pile)
+                agent_type = 1 
                 x, y = model.grid.positions[robot]
-                agents_data.append({'id': agent_type, 'x': x, 'y': y})
+                print(robot.carrying_object) # ver si el robot esta cargando una caja
+                agents_data.append({'agentType': agent_type, 'agentId': robot.id, 'x': x, 'y': y})
+            
+            
+            actual_valid_objects = 0
+            for object in model.objects:
+                if object in model.grid.positions:
+                    actual_valid_objects += 1
+                    agent_type = 2 
+                    x, y = model.grid.positions[object] 
+                    agents_data.append({'agentType': agent_type,  'agentId': object.id,'x': x, 'y': y})
+            
+            #Ver cuantas cajas inicializamos y cuantas hay ahora
+            print(len(model.objects))
+            print(actual_valid_objects)
 
             for pile in model.piles:
-                agent_type = 3  # Tipo de agente (1: Robot, 2: Object, 3: Pile)
-                x, y = model.grid.positions[pile]  # Obtener la posición del agente
-                agents_data.append({'id': agent_type, 'x': x, 'y': y})
+                agent_type = 3 
+                x, y = model.grid.positions[pile]  
+                agents_data.append({'agentType': agent_type, 'agentId': pile.id, 'x': x, 'y': y})
+                            
+            model.print_grid()
             
-            await websocket.send_json({"status": "step completed", "state": agents_data})
+            #Regresa los pasos y la información de posicion de los agentes
+            await websocket.send_json({"status": "step completed", 'step': model.t, "state": agents_data})
         elif data == "close":
             await websocket.close()
             break
