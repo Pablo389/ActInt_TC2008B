@@ -27,13 +27,19 @@ async def websocket_endpoint(websocket: WebSocket):
         data = await websocket.receive_text()  # Espera mensaje del cliente
         if data == "step":  # Si el mensaje es "step", avanza un paso en la simulación
             model.step()
-            robots_info = []
+
+            agents_data = []
             for robot in model.robots:
-                robots_info.append({
-                    'position': model.grid.positions[robot],
-                })
-            # Envía de vuelta el estado actual de la simulación al cliente
-            await websocket.send_json({"status": "step completed", "state": robots_info})
+                agent_type = 1  # Tipo de agente (1: Robot, 2: Object, 3: Pile)
+                x, y = model.grid.positions[robot]
+                agents_data.append({'id': agent_type, 'x': x, 'y': y})
+
+            for pile in model.piles:
+                agent_type = 3  # Tipo de agente (1: Robot, 2: Object, 3: Pile)
+                x, y = model.grid.positions[pile]  # Obtener la posición del agente
+                agents_data.append({'id': agent_type, 'x': x, 'y': y})
+            
+            await websocket.send_json({"status": "step completed", "state": agents_data})
         elif data == "close":
             await websocket.close()
             break
