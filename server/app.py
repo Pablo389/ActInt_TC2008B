@@ -38,9 +38,9 @@ async def websocket_endpoint(websocket: WebSocket):
                 agent_type = 1 
                 x, y = model.grid.positions[robot]
                 print(robot.carrying_object) # ver si el robot esta cargando una caja
-                is_carrying = False
+                is_carrying = 0
                 if robot.carrying_object:
-                    is_carrying = True
+                    is_carrying = 1
                 agents_data.append({'agentType': agent_type, 'agentId': robot.id, 'x': x, 'y': y, 'carryingObject': is_carrying})
             
             
