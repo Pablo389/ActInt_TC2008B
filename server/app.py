@@ -81,8 +81,8 @@ async def websocket_endpoint_frame(websocket: WebSocket):
          
             vision = ComputerVision(data)
 
-            print(vision)
-            await websocket.send_json({"status": "step completed"})
+          
+            await websocket.send_json({"data": vision})
         elif data == "close":
             await websocket.close()
             break
