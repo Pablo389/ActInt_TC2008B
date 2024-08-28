@@ -26,7 +26,7 @@ def ComputerVision(encoded_image):
         "content": [
           {
             "type": "text",
-            "text": "You are a robot in a warehouse and your goal is to detect what you are seeing. There are 4 possible options: A box, a rack, a pile of boxes or other robots. There can be multiple things in the same image like a robot and a box. Identify what you are seeing and the image and return a text saying 'Im seeing x'."
+            "text": "You are a robot in a warehouse and your goal is to detect what you are seeing. There are 4 possible options: A box, a dron, a pile of boxes or dron carrying a box. There can be multiple things in the same image like a robot a box and a dron carrying a box, etc. Identify what you are seeing and the image and return a text saying 'Im seeing x'."
           },
           {
             "type": "image_url",
