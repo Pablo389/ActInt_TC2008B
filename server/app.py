@@ -46,3 +46,21 @@ async def websocket_endpoint(websocket: WebSocket):
         elif data == "close":
             await websocket.close()
             break
+
+
+@app.websocket("/ws/vision/")
+async def websocket_endpoint_frame(websocket: WebSocket):
+    await websocket.accept()
+
+    
+    while True:
+        data = await websocket.receive_text()  # Espera mensaje del cliente
+        if data:
+         
+            vision = ComputerVision(data)
+
+            print(vision)
+            await websocket.send_json({"status": "step completed"})
+        elif data == "close":
+            await websocket.close()
+            break
