@@ -1,11 +1,20 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, HTTPException
 from model.warehouse_model import WarehouseModel
+from vision.vision import ComputerVision
 
 app = FastAPI()
 
 @app.get("/")
 def read_root():
     return {"message": "Warehouse Simulation API"}
+
+@app.post("/vision")
+async def vision_endpoint(image_data):
+    try:
+        vision = ComputerVision(image_data)
+        return vision
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.websocket("/ws/simulation/")
 async def websocket_endpoint(websocket: WebSocket):
